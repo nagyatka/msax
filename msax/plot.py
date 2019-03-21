@@ -3,7 +3,7 @@ import matplotlib.tri as mtri
 import numpy as np
 import seaborn as sns
 
-
+from mpl_toolkits.mplot3d import Axes3D
 
 def ts_with_hist(x, fig = None, gridsize=(1, 3), bins=50):
     """
@@ -69,13 +69,13 @@ def plot_2d_error_surface(err_surface, alphabets, windows, fig = None):
     return fig, ax
 
 
-def plot_3d_error_surface(err_surface, alphabets, windows, ax=None, title=None):
+def plot_3d_error_surface(err_surface, ax=None, title=None):
     """
 
+    :param title:
     :param ax:
     :param err_surface:
-    :param alphabets:
-    :param windows:
+    :type err_surface: msax.error.ErrorSurface
     :return:
     """
     if ax is None:
@@ -83,20 +83,29 @@ def plot_3d_error_surface(err_surface, alphabets, windows, ax=None, title=None):
         ax = fig.add_subplot(1, 1, 1, projection='3d')
 
     from msax.error import ErrorSurface
+    window_sizes = err_surface.windows
+    alphabet_sizes = err_surface.alphabets
     if isinstance(err_surface, ErrorSurface):
         err_surface = err_surface.values
 
-    x = np.repeat(windows, len(alphabets)).astype(float)
-    y = np.tile(alphabets, len(windows)).astype(float)
+    x = np.repeat(window_sizes, len(alphabet_sizes)).astype(float)
+    y = np.tile(alphabet_sizes, len(window_sizes)).astype(float)
     z = np.ravel(err_surface)
 
+    plt.rcParams.update({'font.size': 20})
     triang = mtri.Triangulation(y, x)
     ax.plot_trisurf(triang, z, cmap='viridis', vmin=np.nanmin(z), vmax=np.nanmax(z))
-    ax.set_xlabel('Alphabet')
-    ax.set_ylabel('Windows')
-    ax.set_zlabel('Error')
+    ax.set_xlabel('alphabet size')
+    ax.set_ylabel('window size')
+    ax.set_zlabel('error')
+
+    ax.xaxis.labelpad = 18
+    ax.yaxis.labelpad = 18
+    ax.zaxis.labelpad = 18
 
     if not title is None:
         ax.set_title(title)
+
+    plt.rcParams.update({'font.size': 12})
 
     return ax

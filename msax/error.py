@@ -71,7 +71,7 @@ def sax_error(x, a, w, memory_limit, use_inf=False):
     norm_x = normalize(x)
     paa_x = paa(norm_x, w)
     sym_x = alphabetize(paa_x, a)
-    return paa_error(norm_x, paa_x, w) + alphabet_error(paa_x, sym_x, a) * w
+    return (paa_error(norm_x, paa_x, w) + alphabet_error(paa_x, sym_x, a) * w) + a
 
 
 def error_surface(x_source, alphabet_sizes, window_sizes, m_size):
