@@ -43,7 +43,7 @@ def alphabet_error(paa_x, sax_x, a):
     return np.sum(np.abs(values - paa_x))
 
 
-def sax_error(x, a, w, memory_limit, use_inf=False):
+def sax_error(x, a, w, memory_limit, use_inf=False, l_1 = 1.0):
     """
     Calculates the L_1 error with input parameters. If the w < 2, a < 3 or the generated sax does not fit in the memory
     it will return with np.nan. If the use_inf is True, it returns with np.inf instead of np.nan.
@@ -58,6 +58,8 @@ def sax_error(x, a, w, memory_limit, use_inf=False):
     :type memory_limit: int
     :param use_inf: If the use_inf is True, it returns with np.inf instead of np.nan
     :type use_inf: bool
+    :param l_1: L_1 regularization controller
+    :type l_1: float
     :return: The SAX error
     :rtype: float
     """
@@ -71,10 +73,10 @@ def sax_error(x, a, w, memory_limit, use_inf=False):
     norm_x = normalize(x)
     paa_x = paa(norm_x, w)
     sym_x = alphabetize(paa_x, a)
-    return (paa_error(norm_x, paa_x, w) + alphabet_error(paa_x, sym_x, a) * w) + a
+    return (paa_error(norm_x, paa_x, w) + alphabet_error(paa_x, sym_x, a) * w) + (a + w) * l_1
 
 
-def error_surface(x_source, alphabet_sizes, window_sizes, m_size):
+def error_surface(x_source, alphabet_sizes, window_sizes, m_size, l_1=1.0):
     """
     Generates the error surface by calculating the error at all possible combinations.
 
@@ -90,7 +92,7 @@ def error_surface(x_source, alphabet_sizes, window_sizes, m_size):
 
     for idx_s, alphabet_s in enumerate(alphabet_sizes):
         for idx_w, window in enumerate(window_sizes):
-            res[idx_w][idx_s] = np.sum([sax_error(x, alphabet_s, window, m_size) for x in x_source])
+            res[idx_w][idx_s] = np.mean([sax_error(x, alphabet_s, window, m_size, l_1) for x in x_source])
     return ErrorSurface(res, alphabet_sizes, window_sizes)
 
 

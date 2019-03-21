@@ -8,16 +8,17 @@ import pyswarms
 
 from msax.error import sax_error
 
-def sax_objective_fun(params, x_source, m_size, use_inf=False):
+def sax_objective_fun(params, x_source, m_size, l_1, use_inf=False):
     a = int(np.round(params[0]))
     w = int(np.round(params[1]))
-    return np.mean([sax_error(x=x, a=a, w=w, memory_limit=m_size, use_inf=use_inf) for x in x_source])
+    return np.mean([sax_error(x=x, a=a, w=w, memory_limit=m_size, l_1=l_1, use_inf=use_inf) for x in x_source])
 
 
-def optimize(objective_func, x_source, m_size, mode='cma' , **kwargs):
+def optimize(objective_func, x_source, m_size, l_1 = 1, mode='cma' , **kwargs):
     """
     Available modes: cma, bipop-cma, local-pso, global-pso
 
+    :param l_1:
     :param objective_func:
     :param x_source:
     :param m_size:
@@ -43,7 +44,7 @@ def optimize(objective_func, x_source, m_size, mode='cma' , **kwargs):
             cma.fmin(objective_func,
             x0=x0,
             sigma0=sigma0,
-            args=(x_source, m_size),
+            args=(x_source, m_size, l_1),
             bipop=True if mode=='bipop-cma' else False,
             options={'popsize': popsize, 'seed': seed, 'verbose': verbose}))
 
@@ -94,7 +95,8 @@ def optimize(objective_func, x_source, m_size, mode='cma' , **kwargs):
                 fast=True,
                 x_source=x_source,
                 m_size=m_size,
-                use_inf=True)
+                use_inf=True,
+                l_1=l_1)
             return PSOOptimizationResult(mode, cost, pos, iters, optimizer.cost_history)
         else:
             options['k'] = kwargs.pop('k')
@@ -111,7 +113,8 @@ def optimize(objective_func, x_source, m_size, mode='cma' , **kwargs):
                 fast=True,
                 x_source=x_source,
                 m_size=m_size,
-                use_inf=True)
+                use_inf=True,
+                l_1=l_1)
             return PSOOptimizationResult(mode, cost, pos, iters, optimizer.cost_history)
     else:
         raise RuntimeError('Unknown optimization mode')
