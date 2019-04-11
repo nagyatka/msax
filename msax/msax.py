@@ -162,10 +162,10 @@ def msax(x, w, a, corr_threshold=0.1):
     if not is_independent(x, corr_threshold):
         x = independence_transform(x)
     else:
-        # TODO: ha függetlenek normalizálni kell
-        raise NotImplementedError
+        x = np.apply_along_axis(lambda r: normalize(r), 1, x)
 
     xx = sax(x[0], w, a)
+    xx = np.int64(xx)
     for idx in range(1, len(x)):
         xx += sax(x[idx], w, a, normalized=True) * np.power(a, idx)
 
@@ -186,7 +186,7 @@ def symbol_dist(x, y, bps):
     big, small = (x, y) if x >= y else (y, x)
     if big == small:
         return 0.0
-    return bps[big - 1] - bps[small]
+    return bps[int(big) - 1] - bps[int(small)]
 
 
 def mindist(x, y, a):
@@ -205,28 +205,28 @@ def mindist(x, y, a):
     bps = breakpoints(a)
     ds = [symbol_dist(x[i], y[i], bps) for i in range(len(x))]
 
-    return np.sqrt(x) * np.sqrt(np.sum(np.power(ds,2)))
+    return np.sqrt(len(x)) * np.sqrt(np.sum(np.power(ds,2)))
 
 
-# TODO: ellenőrizni, hogy tényleg jó-e az implementáció!
-def dist(x, y, a, dims=1):
+def dist(x, y, a, dimensions=1):
     """
     Calculates distance between two MSAX representation
     :param x:
     :param y:
     :param a:
-    :param dims:
+    :param dimensions:
     :return:
     """
+
     if x.size != y.size:
         raise ValueError("x and y vectors' length are not equal")
 
-    if dims == 1:
+    if dimensions == 1:
         return mindist(x, y, a)
 
     dim_dists = []
     # decomposition of time series along the dimensions
-    for dim in range(dims - 1, 0, -1):
+    for dim in range(dimensions - 1, -1, -1):
         dim_pow = np.power(a, dim)
         # x
         x_dim = np.floor(x / dim_pow)
