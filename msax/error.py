@@ -43,7 +43,7 @@ def alphabet_error(paa_x, sax_x, a):
     return np.sum(np.abs(values - paa_x))
 
 
-def sax_error(x, a, w, memory_limit, use_inf=False, l_1 = 1.0):
+def sax_error(x, a, w, memory_limit, use_inf=False, l_1=1.0):
     """
     Calculates the L_1 error with input parameters. If the w < 2, a < 3 or the generated sax does not fit in the memory
     it will return with np.nan. If the use_inf is True, it returns with np.inf instead of np.nan.
@@ -132,7 +132,6 @@ class ErrorSurface(object):
         if without_nan:
             df = df.dropna()
         return df
-
 
     def __str__(self):
         return "ErrorSurface: min_w: {}, min_a: {}, min_value: {}".format(self.min_w, self.min_a, self.min)

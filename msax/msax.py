@@ -18,7 +18,7 @@ def breakpoints(a):
     """
     bps = break_point_cache.get(a, None)
     if bps is None:
-        bps = [np.sqrt(2)* erfinv(2*(j / a) - 1) for j in range(1, a)]
+        bps = [np.sqrt(2) * erfinv(2*(j / a) - 1) for j in range(1, a)]
         break_point_cache[a] = bps
     return bps
 
@@ -35,7 +35,7 @@ def symbol_values(a):
     bps = breakpoints(a)
 
     vals = [bps[0]]
-    vals.extend([(bps[x] + bps[x - 1]) / 2 for x in range(1,a-1)])
+    vals.extend([(bps[x] + bps[x - 1]) / 2 for x in range(1, a-1)])
     vals.append(bps[-1])
     return np.array(vals)
 
@@ -84,7 +84,7 @@ def alphabetize(paa_x, a):
     :return: Symbol indices' list. A symbol index can be interpreted as an alphabet index.
     :rtype: np.ndarray
     """
-    return  np.searchsorted(breakpoints(a), paa_x)
+    return np.searchsorted(breakpoints(a), paa_x)
 
 
 def sax(x, w, a, normalized=False):
@@ -103,9 +103,9 @@ def sax(x, w, a, normalized=False):
     :rtype: np.ndarray
     """
     if not normalized:
-        return alphabetize(paa(normalize(x),w), a)
+        return alphabetize(paa(normalize(x), w), a)
     else:
-        return alphabetize(paa(x,w), a)
+        return alphabetize(paa(x, w), a)
 
 
 def independence_transform(x):
